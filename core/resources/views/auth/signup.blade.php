@@ -90,7 +90,7 @@
 
             <p class="mt-7 text-center text-sm text-gray-500">
                 Already have an account?
-                <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:underline">Log in</a>
+                <a href="{{ route('signin') }}" class="font-semibold text-blue-600 hover:underline">Log in</a>
             </p>
         </div>
     </section>

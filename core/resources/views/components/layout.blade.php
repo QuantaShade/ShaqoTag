@@ -42,11 +42,11 @@
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}"
+                    <a href="{{ route('signin') }}"
                        class="hidden rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 sm:block">
                         Log in
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('signup') }}"
                        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
                         Get started
                     </a>
