@@ -9,7 +9,6 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
-    
 
     /**
      * Seed the application's database.
@@ -18,7 +17,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategorySeeder::class,
+            CompanySeeder::class,
             JobSeeder::class,
+            JobApplicationSeeder::class,
+            ReviewSeeder::class,
         ]);
 
         User::firstOrCreate(

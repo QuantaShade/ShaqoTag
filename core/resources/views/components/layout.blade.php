@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,26 +6,39 @@
     <title>{{ $title ?? 'ShaqoTag' }} | ShaqoTag</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-white text-gray-950 antialiased">
+<body class="min-h-screen bg-gray-50 text-gray-950 antialiased flex flex-col justify-between">
 
     <header class="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
         <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
             <a href="{{ route('home') }}" class="flex items-center gap-2">
-                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white">W</span>
+                <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white">S</span>
                 <span class="text-xl font-bold tracking-tight">ShaqoTag</span>
             </a>
 
-            <div class="hidden items-center gap-8 text-sm font-medium text-gray-600 md:flex">
+            <div class="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex">
                 <a href="{{ route('home') }}"
-                   class="{{ request()->routeIs('home') ? 'text-blue-600' : 'hover:text-gray-950' }}">
+                   class="{{ request()->routeIs('home') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
                     Home
                 </a>
                 <a href="{{ route('jobs.index') }}"
-                   class="{{ request()->routeIs('jobs.*') ? 'text-blue-600' : 'hover:text-gray-950' }}">
-                    Find Jobs
+                   class="{{ request()->routeIs('jobs.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Jobs
                 </a>
-                <a href="{{ route('home') }}#how-it-works" class="hover:text-gray-950">
-                    How it works
+                <a href="{{ route('categories.index') }}"
+                   class="{{ request()->routeIs('categories.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Categories
+                </a>
+                <a href="{{ route('companies.index') }}"
+                   class="{{ request()->routeIs('companies.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Companies
+                </a>
+                <a href="{{ route('applications.index') }}"
+                   class="{{ request()->routeIs('applications.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Applications
+                </a>
+                <a href="{{ route('reviews.index') }}"
+                   class="{{ request()->routeIs('reviews.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Reviews
                 </a>
             </div>
 
@@ -55,16 +67,32 @@
         </nav>
     </header>
 
-    <main>
+    <main class="flex-grow">
+        @if (session('success'))
+            <div class="mx-auto max-w-7xl px-6 mt-4">
+                <div class="rounded-lg bg-green-50 p-4 border border-green-200 text-sm font-medium text-green-800">
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mx-auto max-w-7xl px-6 mt-4">
+                <div class="rounded-lg bg-red-50 p-4 border border-red-200 text-sm font-medium text-red-800">
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
+
         {{ $slot }}
     </main>
 
-    <footer class="mt-20 border-t border-gray-200 bg-gray-50">
+    <footer class="mt-20 border-t border-gray-200 bg-white">
         <div class="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-6 py-8 sm:flex-row sm:items-center">
             <div>
-                <span class="font-bold">ShaqoTag</span>
+                <span class="font-bold text-gray-900">ShaqoTag</span>
                 <p class="mt-1 text-sm text-gray-500">
-                    Connecting talent with opportunity.
+                    Connecting talent with opportunity across the globe.
                 </p>
             </div>
             <p class="text-sm text-gray-500">

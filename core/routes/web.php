@@ -1,19 +1,25 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
-use App\Models\Category;
-use App\Models\Job;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home');
-})->name("home");
+})->name('home');
 
-Route::get('sign_up/', [AuthController::class, "signup"])->name("signup");
-Route::post('register/', [AuthController::class, "register"])->name("register");
+Route::get('sign_up/', [AuthController::class, 'signup'])->name('signup');
+Route::post('register/', [AuthController::class, 'register'])->name('register');
 Route::get('sign_in/', [AuthController::class, 'signin'])->name('signin');
 Route::post('login/', [AuthController::class, 'login'])->name('login');
 Route::post('logout/', [AuthController::class, 'logout'])->name('logout');
-Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
-Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
+
+Route::resource('jobs', JobController::class);
+Route::resource('categories', CategoryController::class);
+Route::resource('companies', CompanyController::class);
+Route::resource('applications', JobApplicationController::class);
+Route::resource('reviews', ReviewController::class);
