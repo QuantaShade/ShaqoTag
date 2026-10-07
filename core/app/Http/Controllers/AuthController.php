@@ -24,17 +24,21 @@ class AuthController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
+            'role' => 'required|in:client,freelancer',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
+            'role' => $validated['role'],
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Account created successfully!');
+        $dashboardRoute = $user->isClient() ? 'dashboard.client' : 'dashboard.freelancer';
+
+        return redirect()->route($dashboardRoute)->with('success', 'Account created! Welcome to ShaqoTag.');
     }
 
     public function login(Request $request)
@@ -47,7 +51,10 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
+            $user = Auth::user();
+            $dashboardRoute = $user->isClient() ? 'dashboard.client' : 'dashboard.freelancer';
+
+            return redirect()->intended(route($dashboardRoute))->with('success', 'Welcome back, '.$user->name.'!');
         }
 
         return back()->withErrors([

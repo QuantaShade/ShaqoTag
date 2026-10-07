@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FreelancerDashboardController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ReviewController;
@@ -26,10 +27,20 @@ Route::middleware('guest')->group(function () {
 // Logout route (requires auth)
 Route::post('logout/', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Protected CRUD & Dashboard routes (Requires Login)
+// Protected routes (Requires Login)
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Role-based dashboards
+    Route::get('/dashboard/client', [ClientDashboardController::class, 'index'])->name('dashboard.client');
+    Route::get('/dashboard/freelancer', [FreelancerDashboardController::class, 'index'])->name('dashboard.freelancer');
 
+    // Redirect /dashboard to the correct role dashboard
+    Route::get('/dashboard', function () {
+        return redirect()->route(
+            auth()->user()->isClient() ? 'dashboard.client' : 'dashboard.freelancer'
+        );
+    })->name('dashboard');
+
+    // All CRUD resources
     Route::resource('jobs', JobController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('companies', CompanyController::class);
