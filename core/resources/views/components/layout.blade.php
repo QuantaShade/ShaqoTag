@@ -20,6 +20,10 @@
                    class="{{ request()->routeIs('home') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
                     Home
                 </a>
+                <a href="{{ route('dashboard') }}"
+                   class="{{ request()->routeIs('dashboard') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                    Dashboard
+                </a>
                 <a href="{{ route('jobs.index') }}"
                    class="{{ request()->routeIs('jobs.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
                     Jobs
