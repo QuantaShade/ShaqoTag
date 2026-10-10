@@ -32,10 +32,12 @@
                    class="{{ request()->routeIs('categories.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
                     Categories
                 </a>
-                <a href="{{ route('companies.index') }}"
-                   class="{{ request()->routeIs('companies.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
-                    Companies
-                </a>
+                @if (auth()->check() && auth()->user()->isClient())
+                    <a href="{{ route('companies.index') }}"
+                       class="{{ request()->routeIs('companies.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
+                        Companies
+                    </a>
+                @endif
                 <a href="{{ route('applications.index') }}"
                    class="{{ request()->routeIs('applications.*') ? 'text-blue-600 font-semibold' : 'hover:text-gray-950' }}">
                     Applications

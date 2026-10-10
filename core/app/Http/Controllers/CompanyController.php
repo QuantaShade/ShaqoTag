@@ -12,6 +12,8 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorizeClientsOnly();
+
         $query = Company::query();
 
         if ($request->filled('q')) {
@@ -31,6 +33,8 @@ class CompanyController extends Controller
      */
     public function create()
     {
+        $this->authorizeClientsOnly();
+
         return view('companies.create');
     }
 
@@ -39,6 +43,8 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeClientsOnly();
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -57,6 +63,8 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
+        $this->authorizeClientsOnly();
+
         return view('companies.show', compact('company'));
     }
 
@@ -65,6 +73,8 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
+        $this->authorizeClientsOnly();
+
         return view('companies.edit', compact('company'));
     }
 
@@ -73,6 +83,8 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
+        $this->authorizeClientsOnly();
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -91,8 +103,15 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        $this->authorizeClientsOnly();
+
         $company->delete();
 
         return redirect()->route('companies.index')->with('success', 'Company deleted successfully!');
+    }
+
+    private function authorizeClientsOnly(): void
+    {
+        abort_unless(auth()->user()->isClient(), 403);
     }
 }

@@ -6,7 +6,7 @@
                 <a href="{{ route('categories.edit', $category) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
                     Edit Category
                 </a>
-                <form action="{{ route('categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                <form action="{{ route('categories.destroy', $category) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">

@@ -122,29 +122,31 @@
                 </div>
             </div>
 
-            <!-- Companies & Reviews Stat Card -->
-            <div class="stat-card-hover glass-card rounded-2xl p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Companies & Reviews</span>
-                    <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            @if (auth()->user()->isClient())
+                <!-- Companies & Reviews Stat Card -->
+                <div class="stat-card-hover glass-card rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Companies & Reviews</span>
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-baseline justify-between">
+                        <div>
+                            <p class="text-3xl font-black text-gray-900">{{ $stats['companies'] }}</p>
+                            <span class="text-xs text-gray-500 font-medium">Companies</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xl font-bold text-amber-500">★ {{ $stats['avg_rating'] }}</p>
+                            <span class="text-xs text-gray-500 font-medium">{{ $stats['reviews'] }} Reviews</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 border-t border-gray-100 pt-3 flex justify-between text-xs font-semibold">
+                        <a href="{{ route('companies.index') }}" class="text-blue-600 hover:underline">Companies</a>
+                        <a href="{{ route('reviews.index') }}" class="text-amber-600 hover:underline">Reviews &rarr;</a>
                     </div>
                 </div>
-                <div class="mt-4 flex items-baseline justify-between">
-                    <div>
-                        <p class="text-3xl font-black text-gray-900">{{ $stats['companies'] }}</p>
-                        <span class="text-xs text-gray-500 font-medium">Companies</span>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xl font-bold text-amber-500">★ {{ $stats['avg_rating'] }}</p>
-                        <span class="text-xs text-gray-500 font-medium">{{ $stats['reviews'] }} Reviews</span>
-                    </div>
-                </div>
-                <div class="mt-3 border-t border-gray-100 pt-3 flex justify-between text-xs font-semibold">
-                    <a href="{{ route('companies.index') }}" class="text-blue-600 hover:underline">Companies</a>
-                    <a href="{{ route('reviews.index') }}" class="text-amber-600 hover:underline">Reviews &rarr;</a>
-                </div>
-            </div>
+            @endif
         </div>
 
         <!-- Quick Action Shortcut Cards Bar -->
@@ -171,15 +173,17 @@
                     </div>
                 </a>
 
-                <a href="{{ route('companies.create') }}" class="group flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/60 p-3.5 transition hover:border-sky-300 hover:bg-sky-50/50">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-600 text-white shadow-sm transition group-hover:scale-110">
-                        +
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-gray-900 group-hover:text-sky-600">Add Company</p>
-                        <p class="text-[11px] text-gray-500">Employer profile</p>
-                    </div>
-                </a>
+                @if (auth()->user()->isClient())
+                    <a href="{{ route('companies.create') }}" class="group flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/60 p-3.5 transition hover:border-sky-300 hover:bg-sky-50/50">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-600 text-white shadow-sm transition group-hover:scale-110">
+                            +
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-900 group-hover:text-sky-600">Add Company</p>
+                            <p class="text-[11px] text-gray-500">Employer profile</p>
+                        </div>
+                    </a>
+                @endif
 
                 <a href="{{ route('applications.create') }}" class="group flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50/60 p-3.5 transition hover:border-purple-300 hover:bg-purple-50/50">
                     <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-600 text-white shadow-sm transition group-hover:scale-110">
@@ -348,7 +352,7 @@
                         @forelse ($recentReviews as $rev)
                             <div class="rounded-xl border border-gray-100 bg-gray-50/50 p-3.5 text-xs">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-bold text-gray-900">{{ $rev->reviewer_name }}</span>
+                                    <span class="font-bold text-gray-900">{{ $rev->reviewer?->name ?? $rev->reviewer_name }}</span>
                                     <span class="font-bold text-amber-500">★ {{ $rev->rating }}/5</span>
                                 </div>
                                 <p class="mt-2 text-gray-600 italic line-clamp-2">"{{ $rev->comment }}"</p>

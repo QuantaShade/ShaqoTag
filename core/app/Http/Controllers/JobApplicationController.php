@@ -38,6 +38,8 @@ class JobApplicationController extends Controller
      */
     public function create(Request $request)
     {
+        abort_unless(auth()->user()->isFreelancer(), 403);
+
         $jobs = Job::orderBy('title')->get();
         $selectedJobId = $request->input('job_id');
 
@@ -49,16 +51,21 @@ class JobApplicationController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->isFreelancer(), 403);
+
         $validated = $request->validate([
             'job_id' => 'required|exists:job_posts,id',
             'applicant_name' => 'required|string|max:255',
             'applicant_email' => 'required|email|max:255',
             'cover_letter' => 'required|string',
             'expected_salary' => 'nullable|numeric|min:0',
-            'status' => 'required|in:pending,reviewed,accepted,rejected',
         ]);
 
-        $application = JobApplication::create($validated);
+        $application = JobApplication::create([
+            ...$validated,
+            'user_id' => auth()->id(),
+            'status' => 'pending',
+        ]);
 
         return redirect()->route('applications.show', $application)->with('success', 'Application submitted successfully!');
     }

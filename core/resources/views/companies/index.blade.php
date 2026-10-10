@@ -50,7 +50,7 @@
                     <div class="mt-6 flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                         <a href="{{ route('companies.show', $company) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">View</a>
                         <a href="{{ route('companies.edit', $company) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
-                        <form action="{{ route('companies.destroy', $company) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this company?');">
+                        <form action="{{ route('companies.destroy', $company) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>

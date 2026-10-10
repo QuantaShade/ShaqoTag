@@ -78,7 +78,7 @@
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('applications.show', $app) }}" class="rounded border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50">View</a>
                                     <a href="{{ route('applications.edit', $app) }}" class="rounded border border-gray-200 px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
-                                    <form action="{{ route('applications.destroy', $app) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application?');">
+                                    <form action="{{ route('applications.destroy', $app) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button class="rounded border border-gray-200 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>

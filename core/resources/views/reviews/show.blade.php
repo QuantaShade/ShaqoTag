@@ -2,25 +2,30 @@
     <section class="mx-auto max-w-4xl px-6 py-8">
         <div class="flex items-center justify-between">
             <a href="{{ route('reviews.index') }}" class="text-sm font-medium text-blue-600 hover:underline">&larr; Back to Reviews</a>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('reviews.edit', $review) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
-                    Edit Review
-                </a>
-                <form action="{{ route('reviews.destroy', $review) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                    @csrf
-                    @method('DELETE')
-                    <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">
-                        Delete
-                    </button>
-                </form>
-            </div>
+            @if (auth()->user()->isClient() && $review->reviewer_id === auth()->id())
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('reviews.edit', $review) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
+                        Edit Review
+                    </a>
+                    <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
 
         <div class="mt-6 rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
             <div class="flex items-center justify-between border-b border-gray-100 pb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">{{ $review->reviewer_name }}</h1>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ $review->reviewer?->name ?? $review->reviewer_name }}</h1>
                     <p class="text-sm text-gray-500">Submitted {{ $review->created_at->diffForHumans() }}</p>
+                    @if ($review->user)
+                        <p class="mt-1 text-sm text-gray-600">Freelancer reviewed: {{ $review->user->name }}</p>
+                    @endif
                 </div>
                 <div class="rounded-lg bg-amber-50 px-4 py-2 text-amber-600 font-bold text-lg">
                     ★ {{ $review->rating }} / 5 Stars

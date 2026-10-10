@@ -4,18 +4,20 @@
             <a href="{{ route('jobs.index') }}" class="text-sm font-medium text-blue-600 hover:underline">
                 &larr; Back to jobs
             </a>
-            <div class="flex items-center gap-2">
-                <a href="{{ route('jobs.edit', $job) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
-                    Edit Job
-                </a>
-                <form action="{{ route('jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job post?');">
-                    @csrf
-                    @method('DELETE')
-                    <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">
-                        Delete Job
-                    </button>
-                </form>
-            </div>
+            @if (auth()->user()->isClient() && auth()->id() === $job->user_id)
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('jobs.edit', $job) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
+                        Edit Job
+                    </a>
+                    <form action="{{ route('jobs.destroy', $job) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">
+                            Delete Job
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
 
         <div class="mt-6 border-b border-gray-200 pb-6">
@@ -81,17 +83,22 @@
                 <div class="border-t border-gray-200 pt-6">
                     <div class="flex items-center justify-between">
                         <h2 class="text-lg font-bold text-gray-900">Reviews & Ratings ({{ $job->reviews->count() }})</h2>
-                        <a href="{{ route('reviews.create', ['job_id' => $job->id]) }}" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">
-                            + Add Review
-                        </a>
+                        @if (auth()->user()->isClient() && auth()->id() === $job->user_id)
+                            <a href="{{ route('reviews.create', ['job_id' => $job->id]) }}" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">
+                                + Review an Applicant
+                            </a>
+                        @endif
                     </div>
                     <div class="mt-4 space-y-3">
                         @forelse ($job->reviews as $rev)
                             <div class="rounded-lg border border-gray-200 bg-white p-4 text-sm">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-semibold text-gray-900">{{ $rev->reviewer_name }}</span>
+                                    <span class="font-semibold text-gray-900">{{ $rev->reviewer?->name ?? $rev->reviewer_name }}</span>
                                     <span class="font-bold text-amber-500">★ {{ $rev->rating }}/5</span>
                                 </div>
+                                @if ($rev->user)
+                                    <p class="mt-1 text-xs text-gray-500">Freelancer: {{ $rev->user->name }}</p>
+                                @endif
                                 <p class="mt-2 text-xs text-gray-600">{{ $rev->comment }}</p>
                             </div>
                         @empty

@@ -78,12 +78,14 @@
                             <p class="text-lg font-bold text-gray-900">${{ number_format($job->budget, 2) }}</p>
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('jobs.show', $job) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">View</a>
-                                <a href="{{ route('jobs.edit', $job) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
-                                <form action="{{ route('jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>
-                                </form>
+                                @if (auth()->user()->isClient() && auth()->id() === $job->user_id)
+                                    <a href="{{ route('jobs.edit', $job) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
+                                    <form action="{{ route('jobs.destroy', $job) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

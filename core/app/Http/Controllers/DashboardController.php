@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         $recentJobs = Job::with('category')->latest()->take(5)->get();
         $recentApplications = JobApplication::with('job')->latest()->take(5)->get();
-        $recentReviews = Review::with('job')->latest()->take(4)->get();
+        $recentReviews = Review::with(['job', 'reviewer', 'user'])->latest()->take(4)->get();
         $topCategories = Category::withCount('jobs')->orderByDesc('jobs_count')->take(4)->get();
 
         return view('dashboard', compact(

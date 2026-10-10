@@ -217,6 +217,9 @@
                                             <p class="text-xs font-semibold text-gray-700">{{ Str::limit($rev->job?->title, 25) }}</p>
                                             <span class="text-xs font-bold text-amber-500">★ {{ $rev->rating }}/5</span>
                                         </div>
+                                        @if ($rev->reviewer)
+                                            <p class="mt-1 text-[11px] text-gray-500">Reviewed by {{ $rev->reviewer->name }}</p>
+                                        @endif
                                         <p class="mt-1 text-[11px] text-gray-500 italic line-clamp-2">"{{ $rev->comment }}"</p>
                                     </div>
                                 @endforeach
@@ -242,20 +245,6 @@
                         <div>
                             <p class="text-xs font-bold text-gray-900 group-hover:text-purple-600">Submit Application</p>
                             <p class="text-[11px] text-gray-500">Pitch your proposal</p>
-                        </div>
-                    </a>
-                    <a href="{{ route('reviews.create') }}" class="group flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 transition hover:border-amber-300 hover:bg-amber-50">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500 text-white text-lg font-bold transition group-hover:scale-110">★</div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-900 group-hover:text-amber-600">Write Review</p>
-                            <p class="text-[11px] text-gray-500">Share your feedback</p>
-                        </div>
-                    </a>
-                    <a href="{{ route('companies.index') }}" class="group flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 transition hover:border-sky-300 hover:bg-sky-50">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-600 text-white text-lg font-bold transition group-hover:scale-110">🏢</div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-900 group-hover:text-sky-600">Companies</p>
-                            <p class="text-[11px] text-gray-500">View employers</p>
                         </div>
                     </a>
                 </div>

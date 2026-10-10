@@ -7,9 +7,11 @@
                 <p class="mt-1 text-sm text-gray-500">Read and manage candidate and client feedback on completed jobs.</p>
             </div>
             <div>
-                <a href="{{ route('reviews.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
-                    + Add Review
-                </a>
+                @if (auth()->user()->isClient())
+                    <a href="{{ route('reviews.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+                        + Review an Applicant
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -37,7 +39,7 @@
                 <div class="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-blue-200">
                     <div>
                         <div class="flex items-center justify-between">
-                            <h3 class="text-base font-bold text-gray-900">{{ $rev->reviewer_name }}</h3>
+                            <h3 class="text-base font-bold text-gray-900">{{ $rev->reviewer?->name ?? $rev->reviewer_name }}</h3>
                             <span class="rounded bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-600">
                                 ★ {{ $rev->rating }}/5
                             </span>
@@ -47,6 +49,9 @@
                                 Job: <a href="{{ route('jobs.show', $rev->job) }}" class="font-medium text-blue-600 hover:underline">{{ $rev->job->title }}</a>
                             </p>
                         @endif
+                        @if($rev->user)
+                            <p class="mt-1 text-xs text-gray-500">Freelancer: {{ $rev->user->name }}</p>
+                        @endif
                         <p class="mt-3 text-sm text-gray-600 italic line-clamp-3">
                             "{{ $rev->comment }}"
                         </p>
@@ -54,19 +59,23 @@
 
                     <div class="mt-6 flex items-center justify-end gap-2 border-t border-gray-100 pt-4">
                         <a href="{{ route('reviews.show', $rev) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">View</a>
-                        <a href="{{ route('reviews.edit', $rev) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
-                        <form action="{{ route('reviews.destroy', $rev) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                            @csrf
-                            @method('DELETE')
-                            <button class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>
-                        </form>
+                        @if (auth()->user()->isClient() && $rev->reviewer_id === auth()->id())
+                            <a href="{{ route('reviews.edit', $rev) }}" class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50">Edit</a>
+                            <form action="{{ route('reviews.destroy', $rev) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Delete</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             @empty
                 <div class="col-span-full rounded-xl border border-dashed border-gray-300 p-12 text-center">
                     <h3 class="text-base font-semibold text-gray-900">No reviews found</h3>
                     <p class="mt-1 text-sm text-gray-500">Add feedback or reviews for a job.</p>
-                    <a href="{{ route('reviews.create') }}" class="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">+ Add Review</a>
+                    @if (auth()->user()->isClient())
+                        <a href="{{ route('reviews.create') }}" class="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">+ Review an Applicant</a>
+                    @endif
                 </div>
             @endforelse
         </div>

@@ -99,7 +99,13 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        $job->load(['category', 'client', 'applications', 'reviews']);
+        $job->load([
+            'category',
+            'client',
+            'applications.user',
+            'reviews.reviewer',
+            'reviews.user',
+        ]);
 
         return view('jobs.show', compact('job'));
     }
@@ -109,6 +115,8 @@ class JobController extends Controller
      */
     public function edit(Job $job)
     {
+        $this->authorizeJobManagement($job);
+
         $categories = Category::orderBy('name')->get();
 
         return view('jobs.edit', compact('job', 'categories'));
@@ -119,6 +127,8 @@ class JobController extends Controller
      */
     public function update(Request $request, Job $job)
     {
+        $this->authorizeJobManagement($job);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
@@ -158,8 +168,18 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
+        $this->authorizeJobManagement($job);
+
         $job->delete();
 
         return redirect()->route('jobs.index')->with('success', 'Job post deleted successfully!');
+    }
+
+    private function authorizeJobManagement(Job $job): void
+    {
+        abort_unless(
+            auth()->user()->isClient() && $job->user_id === auth()->id(),
+            403
+        );
     }
 }

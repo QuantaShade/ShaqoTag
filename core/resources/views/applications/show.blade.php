@@ -6,7 +6,7 @@
                 <a href="{{ route('applications.edit', $application) }}" class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 shadow-sm hover:bg-blue-50">
                     Edit Application
                 </a>
-                <form action="{{ route('applications.destroy', $application) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application?');">
+                <form action="{{ route('applications.destroy', $application) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50">

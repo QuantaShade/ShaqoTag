@@ -12,15 +12,19 @@ class FreelancerDashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Freelancer's submitted applications (by email match)
-        $myApplications = JobApplication::where('applicant_email', $user->email)
+        // Keep showing legacy applications while using user relationships for new submissions.
+        $myApplications = JobApplication::where('user_id', $user->id)
+            ->orWhere(function ($query) use ($user) {
+                $query->whereNull('user_id')
+                    ->where('applicant_email', $user->email);
+            })
             ->with('job')
             ->latest()
             ->get();
 
-        // Reviews submitted by this freelancer
-        $myReviews = Review::where('reviewer_name', $user->name)
-            ->with('job')
+        // Reviews received by this freelancer
+        $myReviews = Review::where('user_id', $user->id)
+            ->with(['job', 'reviewer'])
             ->latest()
             ->get();
 
