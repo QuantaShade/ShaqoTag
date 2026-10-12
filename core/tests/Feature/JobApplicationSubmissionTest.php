@@ -45,6 +45,21 @@ class JobApplicationSubmissionTest extends TestCase
         $this->assertTrue($application->user->is($freelancer));
     }
 
+    public function test_client_cannot_open_the_application_form_and_is_not_shown_apply_links(): void
+    {
+        $client = User::factory()->create(['role' => 'client']);
+        $job = $this->createJob();
+
+        $this->actingAs($client)
+            ->get(route('jobs.show', $job))
+            ->assertOk()
+            ->assertDontSee('Apply Now')
+            ->assertDontSee('Apply for Job');
+
+        $this->get(route('applications.create', ['job_id' => $job->id]))
+            ->assertForbidden();
+    }
+
     private function createJob(): Job
     {
         $client = User::factory()->create(['role' => 'client']);

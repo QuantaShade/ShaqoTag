@@ -10,12 +10,10 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
-// Public Home Page
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
-// Authentication routes (accessible to guests)
 Route::middleware('guest')->group(function () {
     Route::get('sign_up/', [AuthController::class, 'signup'])->name('signup');
     Route::post('register/', [AuthController::class, 'register'])->name('register');
@@ -23,24 +21,15 @@ Route::middleware('guest')->group(function () {
     Route::get('login/', [AuthController::class, 'signin'])->name('login');
     Route::post('login/', [AuthController::class, 'login']);
 });
-
-// Logout route (requires auth)
 Route::post('logout/', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
-// Protected routes (Requires Login)
 Route::middleware('auth')->group(function () {
-    // Role-based dashboards
     Route::get('/dashboard/client', [ClientDashboardController::class, 'index'])->name('dashboard.client');
     Route::get('/dashboard/freelancer', [FreelancerDashboardController::class, 'index'])->name('dashboard.freelancer');
-
-    // Redirect /dashboard to the correct role dashboard
     Route::get('/dashboard', function () {
         return redirect()->route(
             auth()->user()->isClient() ? 'dashboard.client' : 'dashboard.freelancer'
         );
     })->name('dashboard');
-
-    // All CRUD resources
     Route::resource('jobs', JobController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('companies', CompanyController::class);

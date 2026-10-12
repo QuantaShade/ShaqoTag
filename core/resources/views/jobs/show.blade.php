@@ -59,9 +59,11 @@
                 <div class="border-t border-gray-200 pt-6">
                     <div class="flex items-center justify-between">
                         <h2 class="text-lg font-bold text-gray-900">Applications ({{ $job->applications->count() }})</h2>
-                        <a href="{{ route('applications.create', ['job_id' => $job->id]) }}" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">
-                            Apply for Job
-                        </a>
+                        @if (auth()->user()->isFreelancer())
+                            <a href="{{ route('applications.create', ['job_id' => $job->id]) }}" class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">
+                                Apply for Job
+                            </a>
+                        @endif
                     </div>
                     <div class="mt-4 space-y-3">
                         @forelse ($job->applications as $app)
@@ -130,9 +132,11 @@
                 </div>
 
                 <div class="mt-6 space-y-2">
-                    <a href="{{ route('applications.create', ['job_id' => $job->id]) }}" class="block w-full text-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
-                        Apply Now
-                    </a>
+                    @if (auth()->user()->isFreelancer())
+                        <a href="{{ route('applications.create', ['job_id' => $job->id]) }}" class="block w-full text-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+                            Apply Now
+                        </a>
+                    @endif
                 </div>
             </aside>
         </div>

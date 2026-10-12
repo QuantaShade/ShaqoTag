@@ -14,13 +14,15 @@ class CompanyController extends Controller
     {
         $this->authorizeClientsOnly();
 
-        $query = Company::query();
+        $query = auth()->user()->companies();
 
         if ($request->filled('q')) {
             $search = $request->input('q');
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('location', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         $companies = $query->latest()->paginate(10)->withQueryString();
@@ -53,7 +55,7 @@ class CompanyController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $company = Company::create($validated);
+        $company = auth()->user()->companies()->create($validated);
 
         return redirect()->route('companies.show', $company)->with('success', 'Company created successfully!');
     }
@@ -64,6 +66,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $this->authorizeClientsOnly();
+        $this->authorizeCompanyOwnership($company);
 
         return view('companies.show', compact('company'));
     }
@@ -74,6 +77,7 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
         $this->authorizeClientsOnly();
+        $this->authorizeCompanyOwnership($company);
 
         return view('companies.edit', compact('company'));
     }
@@ -84,6 +88,7 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company)
     {
         $this->authorizeClientsOnly();
+        $this->authorizeCompanyOwnership($company);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -104,6 +109,7 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         $this->authorizeClientsOnly();
+        $this->authorizeCompanyOwnership($company);
 
         $company->delete();
 
@@ -113,5 +119,10 @@ class CompanyController extends Controller
     private function authorizeClientsOnly(): void
     {
         abort_unless(auth()->user()->isClient(), 403);
+    }
+
+    private function authorizeCompanyOwnership(Company $company): void
+    {
+        abort_unless($company->user_id === auth()->id(), 403);
     }
 }

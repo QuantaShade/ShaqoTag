@@ -6,11 +6,13 @@
                 <h1 class="mt-1 text-3xl font-bold tracking-tight text-gray-900">Job Applications</h1>
                 <p class="mt-1 text-sm text-gray-500">Track and review applications submitted by job candidates.</p>
             </div>
-            <div>
-                <a href="{{ route('applications.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
-                    + Submit Application
-                </a>
-            </div>
+            @if (auth()->user()->isFreelancer())
+                <div>
+                    <a href="{{ route('applications.create') }}" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+                        + Submit Application
+                    </a>
+                </div>
+            @endif
         </div>
 
         <form action="{{ route('applications.index') }}" method="GET" class="mt-6 flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:flex-row">
