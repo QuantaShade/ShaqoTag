@@ -17,12 +17,15 @@ class CompanyAccessTest extends TestCase
         $company = $client->companies()->create(['name' => 'Example Company']);
         $anotherClient = User::factory()->create(['role' => 'client']);
         $anotherClient->companies()->create(['name' => 'Another Client Company']);
+        $sharedCompany = $client->companies()->create(['name' => 'Shared Company']);
+        $anotherClient->companies()->attach($sharedCompany);
 
         $this->actingAs($client)
             ->get(route('companies.index'))
             ->assertOk()
             ->assertSee('Companies')
             ->assertSee($company->name)
+            ->assertSee($sharedCompany->name)
             ->assertDontSee('Another Client Company')
             ->assertDontSee('onsubmit="return confirm', false);
 
@@ -44,34 +47,43 @@ class CompanyAccessTest extends TestCase
 
         $company = Company::query()->where('name', 'My Company')->firstOrFail();
 
-        $this->assertSame($client->id, $company->user_id);
-        $this->assertTrue($company->client->is($client));
+        $this->assertTrue($company->clients->contains($client));
         $this->assertTrue($client->companies->contains($company));
     }
 
-    public function test_client_cannot_manage_another_clients_company(): void
+    public function test_clients_can_share_and_manage_a_company_through_the_pivot(): void
     {
-        $owner = User::factory()->create(['role' => 'client']);
+        $client = User::factory()->create(['role' => 'client']);
         $otherClient = User::factory()->create(['role' => 'client']);
-        $company = $owner->companies()->create(['name' => 'Private Company']);
+        $company = $client->companies()->create(['name' => 'Shared Company']);
+        $otherClient->companies()->attach($company);
 
         $this->actingAs($otherClient)
             ->get(route('companies.show', $company))
-            ->assertForbidden();
+            ->assertOk();
 
         $this->get(route('companies.edit', $company))
-            ->assertForbidden();
+            ->assertOk();
 
         $this->put(route('companies.update', $company), ['name' => 'Changed Company'])
-            ->assertForbidden();
-
-        $this->delete(route('companies.destroy', $company))
-            ->assertForbidden();
+            ->assertRedirect(route('companies.show', $company));
 
         $this->assertDatabaseHas('companies', [
             'id' => $company->id,
-            'name' => 'Private Company',
-            'user_id' => $owner->id,
+            'name' => 'Changed Company',
+        ]);
+
+        $this->delete(route('companies.destroy', $company))
+            ->assertRedirect(route('companies.index'));
+
+        $this->assertDatabaseHas('companies', ['id' => $company->id]);
+        $this->assertDatabaseMissing('company_user', [
+            'company_id' => $company->id,
+            'user_id' => $otherClient->id,
+        ]);
+        $this->assertDatabaseHas('company_user', [
+            'company_id' => $company->id,
+            'user_id' => $client->id,
         ]);
     }
 

@@ -14,7 +14,7 @@ class CompanyController extends Controller
     {
         $this->authorizeClientsOnly();
 
-        $query = auth()->user()->companies();
+        $query = auth()->user()->companies()->select('companies.*');
 
         if ($request->filled('q')) {
             $search = $request->input('q');
@@ -111,7 +111,11 @@ class CompanyController extends Controller
         $this->authorizeClientsOnly();
         $this->authorizeCompanyOwnership($company);
 
-        $company->delete();
+        $company->clients()->detach(auth()->id());
+
+        if ($company->clients()->doesntExist()) {
+            $company->delete();
+        }
 
         return redirect()->route('companies.index')->with('success', 'Company deleted successfully!');
     }
@@ -123,6 +127,6 @@ class CompanyController extends Controller
 
     private function authorizeCompanyOwnership(Company $company): void
     {
-        abort_unless($company->user_id === auth()->id(), 403);
+        abort_unless($company->clients()->whereKey(auth()->id())->exists(), 403);
     }
 }
